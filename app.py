@@ -10,9 +10,17 @@ load_dotenv()
 
 app = Flask(__name__)
 
+supabase_url = os.environ.get("SUPABASE_URL")
+supabase_publishable_key = os.environ.get("SUPABASE_PUBLISHABLE_KEY")
+
+if not supabase_url or not supabase_publishable_key:
+    raise RuntimeError(
+        "SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY must be configured"
+    )
+
 supabase: Client = create_client(
-    os.environ.get("SUPABASE_URL"),
-    os.environ.get("SUPABASE_PUBLISHABLE_KEY"),
+    supabase_url,
+    supabase_publishable_key,
 )
 
 
@@ -70,4 +78,8 @@ def get_event(event_id):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", "5000")),
+        debug=False,
+    )
